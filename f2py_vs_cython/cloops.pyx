@@ -2,6 +2,8 @@ from __future__ import division
 import numpy as np
 cimport numpy as np
 
+cimport cython
+
 DTYPE = np.float64
 ctypedef np.float64_t DTYPE_t
 
@@ -10,6 +12,7 @@ cdef extern from "math.h":
     double sqrt(double x)
     double exp(double x)
 
+@cython.boundscheck(False) # turn of bounds-checking for entire function
 cdef double _norm2(np.ndarray[DTYPE_t, ndim=1] a1, np.ndarray[DTYPE_t, ndim=1] a2):
     cdef unsigned int p = a1.shape[0]
     cdef unsigned int i
@@ -18,6 +21,7 @@ cdef double _norm2(np.ndarray[DTYPE_t, ndim=1] a1, np.ndarray[DTYPE_t, ndim=1] a
         out += pow(a1[i]-a2[i],2)
     return out
 
+@cython.boundscheck(False) # turn of bounds-checking for entire function
 def c2loops(np.ndarray[DTYPE_t, ndim=2] f, np.ndarray[DTYPE_t, ndim=2] g):
     cdef unsigned int n = f.shape[0]
     cdef unsigned int m = g.shape[0]
@@ -30,7 +34,7 @@ def c2loops(np.ndarray[DTYPE_t, ndim=2] f, np.ndarray[DTYPE_t, ndim=2] g):
             out[i,j] = exp(-sqrt(_norm2(f[i,:],g[j,:])))
     return out
 
-
+@cython.boundscheck(False) # turn of bounds-checking for entire function
 def c4loops(np.ndarray[DTYPE_t, ndim=2] f, np.ndarray[DTYPE_t, ndim=2] g):
     cdef unsigned int n = f.shape[0]
     cdef unsigned int m = g.shape[0]
